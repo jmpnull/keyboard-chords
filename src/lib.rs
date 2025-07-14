@@ -4,30 +4,32 @@
 //! Each key press event consists of sending a unicode or virutal KEY_DOWN event,
 //! waiting for the specified press duration, and then sending KEY_UP.
 //!
+//! Notably, `keyboard-chords` can send the complete 'chord' in single a system `_send_inputs` call.
+//! This allows you to, for instance, send a chord that presses the 'UP' and 'RIGHT' arrow keys, but holds the 'UP'
+//! key for 3 seconds while releasing the 'RIGHT' key after only 500 ms.
+//!
 //! The primary focus of `keyboard-chords` is to  make it as simple as possible to simulate
 //! keyboard inputs. For instance, consider this `Chord` that sends 'Hello, world!':
 //!
 //! ```no_run
+//! # use std::io::{stdin, stdout, Write};
 //! # use std::time::Duration;
-//! # use std::io::stdin;
-//! use chords::{Chord, VirtualKey::Enter};
+//! #
+//! use keyboard_chords::Chord;
 //!
 //! #[tokio::main]
 //! async fn main() {
-//!     // Create a new chord from a string of utf16-characters
-//!     let mut chord = Chord::from("Hello, world!".encode_utf16());
+//!     // Create a new chord
+//!     let mut chord = Chord::new();
 //!
-//!     // Add an enter-key at the end, so that our input will complete
-//!     chord.push_vk(Enter);
+//!     // Pushing a string will append the required key presses
+//!     chord.push_str("Hello, world!");
+//!
+//!     // Emulate typing delay of 25 to 175ms per keypress
+//!     chord.typewriter(25..175);
 //!
 //!     // Wait some time before playing the keys back
-//!     tokio::task::spawn(chord.play_after(Duration::from_millis(10)));
-//!
-//!     // Read the input, and check our result
-//!     let mut input = String::new();
-//!     stdin().read_line(&mut input).expect("Failed to read line!");
-//!
-//!     assert_eq!(input.trim(), "Hello, world!")
+//!     chord.play_after(Duration::from_millis(500)).await;
 //! }
 //! ```
 
