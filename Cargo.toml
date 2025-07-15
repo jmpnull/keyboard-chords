@@ -1,9 +1,11 @@
 [package]
 name = "keyboard-chords"
+authors = ["jmpnull <jumpnull@proton.me>"]
 version = "0.1.0"
 edition = "2021"
-
-# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+license-file = "LICENSE"
+description = "A crate for windows input events"
+repository = "https://github.com/jmpnull/keyboard-chords"
 
 [dependencies]
 futures = "0.3"
